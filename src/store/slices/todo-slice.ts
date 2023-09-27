@@ -42,11 +42,6 @@ export const todoSlice = createSlice({
       state.content = action.payload.content;
     },
   },
-  extraReducers(builder) {
-    builder.addCase(fetchDeleteTodo.fulfilled, (state, action) => {
-      console.log(action.payload);
-    });
-  },
 });
 
 export const { setTodoUpdate, setTodoDelete } = todoSlice.actions;
