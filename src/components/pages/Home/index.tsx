@@ -1,46 +1,43 @@
+import { useEffect } from "react";
+import { useAppSelector } from "../../../hooks/useAppSelector";
 import Button from "../../elements/Button";
 import Card from "../../elements/Card";
 import Container from "../../elements/Container";
-import Form from "../../elements/Form";
-import Input from "../../elements/Input";
+import { Navigate } from "react-router-dom";
+import FormCreateTodo from "./FormCreateTodo";
+import FormUpdateTodo from "./FormUpdateTodo";
+import ListTodo from "./ListTodo";
+import { useAppDispatch } from "../../../hooks/useAppDispatch";
+import { fetchUser } from "../../../store/slices/user-slice";
 
 function Home() {
+  const { token } = useAppSelector((state) => state.auth);
+  const { todos } = useAppSelector((state) => state.users);
+  const dispatch = useAppDispatch();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    location.href = "/"
+  }
+
+  useEffect(() => {
+    dispatch(fetchUser(token));
+  }, []);
+
+  if (token === null) {
+    return <Navigate to={"/login"} />;
+  }
+
   return (
     <Container className="gap-10">
-      <Form className="py-3 px-3 lg:w-2/5">
-        <div className="flex w-full gap-5">
-          <Input
-            type="text"
-            id="todos"
-            placeholder="Add your new todo"
-            className="flex-1 ps-3"
-          ></Input>
-          <Button type="submit">Add</Button>
-        </div>
-      </Form>
-      <Card className="py-3 px-3 lg:w-2/5 gap-10">
-        <Form className="p-0 lg:w-full">
-          <div className="flex w-full gap-5">
-            <Input
-              type="text"
-              id="editTodo"
-              placeholder="Edit your todo"
-              className="flex-1 ps-3"
-            ></Input>
-            <Button type="submit">Save</Button>
-          </div>
-        </Form>
-        <ul className="flex flex-col gap-4 w-full max-h-96 overflow-auto">
-          <li className="flex gap-1 items-center">
-            <p className="flex-1 bg-slate-400 text-white py-1 ps-3 rounded shadow-md">
-              List
-            </p>
-            <Button type="button">+</Button>
-            <Button type="button">+</Button>
-          </li>
-        </ul>
-      </Card>
-      <Button type="button">Logout</Button>
+      <FormCreateTodo />
+      {todos.length > 0 && (
+        <Card className="py-3 px-3 lg:w-2/5 gap-10">
+          <FormUpdateTodo />
+          <ListTodo />
+        </Card>
+      )}
+      <Button type="button" onClick={handleLogout}>Logout</Button>
     </Container>
   );
 }

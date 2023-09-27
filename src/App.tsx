@@ -2,8 +2,10 @@ import "./App.css";
 import Button from "./components/elements/Button";
 import Container from "./components/elements/Container";
 import { Link } from "react-router-dom";
+import { useAppSelector } from "./hooks/useAppSelector";
 
 function App() {
+  const token = useAppSelector((state) => state.auth.token);
   return (
     <Container>
       <h1 className="text-cyan-500 text-4xl font-bold">ToDo List App</h1>
@@ -14,12 +16,20 @@ function App() {
         important tasks at the bottom.
       </p>
       <div className="flex mt-10 gap-5">
-        <Link to={"/login"}>
-          <Button type="button">Login</Button>
-        </Link>
-        <Link to={"/register"}>
-          <Button type="button">Register</Button>
-        </Link>
+        {token !== null ? (
+          <Link to={"/home"}>
+            <Button type="button">Home</Button>
+          </Link>
+        ) : (
+          <>
+            <Link to={"/login"}>
+              <Button type="button">Login</Button>
+            </Link>
+            <Link to={"/register"}>
+              <Button type="button">Register</Button>
+            </Link>
+          </>
+        )}
       </div>
     </Container>
   );
